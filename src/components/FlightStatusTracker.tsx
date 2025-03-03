@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Timer, PlaneTakeoff, Navigation, ArrowDown, MapPin, Check, Users } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 
-type FlightStatus = 'boarding' | 'departure' | 'cruise' | 'descent' | 'approach' | 'taxi' | 'parked' | 'deboarding';
+type FlightStatus = 'boarding' | 'taxi-out' | 'departure' | 'cruise' | 'descent' | 'approach' | 'taxi-in' | 'parked' | 'deboarding';
 
 interface FlightPhase {
   id: FlightStatus;
@@ -17,23 +17,66 @@ interface FlightPhase {
 
 const flightPhases: FlightPhase[] = [
   { id: 'boarding', label: 'Boarding', icon: Users },
+  { id: 'taxi-out', label: 'Taxi Out', icon: Navigation },
   { id: 'departure', label: 'Departure', icon: PlaneTakeoff },
   { id: 'cruise', label: 'Cruise', icon: Navigation },
   { id: 'descent', label: 'Descent', icon: ArrowDown },
   { id: 'approach', label: 'Approach', icon: PlaneTakeoff },
-  { id: 'taxi', label: 'Taxi', icon: Navigation },
+  { id: 'taxi-in', label: 'Taxi In', icon: Navigation },
   { id: 'parked', label: 'Parked', icon: MapPin },
   { id: 'deboarding', label: 'Deboarding', icon: Users },
 ];
 
 export const FlightStatusTracker = () => {
   const [currentStatus, setCurrentStatus] = useState<FlightStatus>('boarding');
-  const [startTime, setStartTime] = useState<Date>(new Date());
+  const [flightStartTime, setFlightStartTime] = useState<Date | null>(null);
+  const [flightEndTime, setFlightEndTime] = useState<Date | null>(null);
+  const [elapsedTime, setElapsedTime] = useState<string>('00:00:00');
   const { toast } = useToast();
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (flightStartTime && !flightEndTime) {
+      intervalId = setInterval(() => {
+        const now = new Date();
+        const diff = now.getTime() - flightStartTime.getTime();
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        setElapsedTime(
+          `${hours.toString().padStart(2, '0')}:${minutes
+            .toString()
+            .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        );
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [flightStartTime, flightEndTime]);
 
   const updateStatus = (newStatus: FlightStatus) => {
     setCurrentStatus(newStatus);
     const phase = flightPhases.find(phase => phase.id === newStatus);
+    
+    if (newStatus === 'taxi-out' && !flightStartTime) {
+      setFlightStartTime(new Date());
+      toast({
+        title: "Flight Timer Started",
+        description: "The flight timer has begun.",
+      });
+    } else if (newStatus === 'parked') {
+      setFlightEndTime(new Date());
+      toast({
+        title: "Flight Complete",
+        description: `Total flight time: ${elapsedTime}`,
+      });
+    }
+
     toast({
       title: "Flight Status Updated",
       description: `Current phase: ${phase?.label}`,
@@ -45,21 +88,21 @@ export const FlightStatusTracker = () => {
     const currentIndex = phases.indexOf(currentStatus);
     const statusIndex = phases.indexOf(status);
 
-    if (status === currentStatus) return "bg-flight-active text-white";
-    if (statusIndex < currentIndex) return "bg-flight-completed text-white";
-    return "bg-flight-pending text-white/80";
+    if (status === currentStatus) return "bg-[#ea384c] text-white";
+    if (statusIndex < currentIndex) return "bg-black/90 text-white";
+    return "bg-gray-600/40 text-white/80";
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-black/95 p-6">
       <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-semibold text-gray-900">Flight Status Tracker</h1>
-          <p className="text-gray-500">Current Phase: {flightPhases.find(phase => phase.id === currentStatus)?.label}</p>
+          <h1 className="text-3xl font-semibold text-white">Air Canada Flight Status</h1>
+          <p className="text-[#ea384c]">Current Phase: {flightPhases.find(phase => phase.id === currentStatus)?.label}</p>
         </div>
 
-        <Card className="p-6 bg-white shadow-lg rounded-xl">
-          <div className="grid grid-cols-4 gap-4">
+        <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+          <div className="grid grid-cols-3 gap-4">
             {flightPhases.map((phase) => (
               <Button
                 key={phase.id}
@@ -75,13 +118,18 @@ export const FlightStatusTracker = () => {
           </div>
         </Card>
 
-        <Card className="p-6 bg-white shadow-lg rounded-xl">
+        <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Timer className="h-5 w-5 text-gray-500" />
-              <span className="text-sm text-gray-500">Flight started at: {startTime.toLocaleTimeString()}</span>
+              <Timer className="h-5 w-5 text-[#ea384c]" />
+              <span className="text-sm text-white">
+                Flight Time: {elapsedTime}
+              </span>
             </div>
-            <Badge variant="outline" className="text-flight-active border-flight-active">
+            <Badge 
+              variant="outline" 
+              className="text-[#ea384c] border-[#ea384c]"
+            >
               Active Flight
             </Badge>
           </div>
