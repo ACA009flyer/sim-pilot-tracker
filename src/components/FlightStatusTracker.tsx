@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,7 +30,7 @@ export const FlightStatusTracker = () => {
   const [currentStatus, setCurrentStatus] = useState<FlightStatus>('boarding');
   const [flightStartTime, setFlightStartTime] = useState<Date | null>(null);
   const [flightEndTime, setFlightEndTime] = useState<Date | null>(null);
-  const [elapsedTime, setElapsedTime] = useState<string>('00:00:00');
+  const [elapsedTime, setElapsedTime] = useState<string>('00:00');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -43,11 +42,8 @@ export const FlightStatusTracker = () => {
         const diff = now.getTime() - flightStartTime.getTime();
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         setElapsedTime(
-          `${hours.toString().padStart(2, '0')}:${minutes
-            .toString()
-            .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+          `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
         );
       }, 1000);
     }
