@@ -89,6 +89,8 @@ export const FlightStatusTracker = () => {
     return "bg-gray-600/40 text-white/80";
   };
 
+  const isFlightActive = flightStartTime && !flightEndTime;
+
   return (
     <div className="min-h-screen bg-black/95 p-6">
       <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
@@ -122,12 +124,14 @@ export const FlightStatusTracker = () => {
                 Flight Time: {elapsedTime}
               </span>
             </div>
-            <Badge 
-              variant="outline" 
-              className="text-[#ea384c] border-[#ea384c]"
-            >
-              Active Flight
-            </Badge>
+            {isFlightActive ? (
+              <Badge 
+                variant="outline" 
+                className="text-[#ea384c] border-[#ea384c]"
+              >
+                Active Flight
+              </Badge>
+            ) : null}
           </div>
         </Card>
       </div>
