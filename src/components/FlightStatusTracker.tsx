@@ -121,7 +121,7 @@ export const FlightStatusTracker = () => {
             <div className="flex items-center gap-2">
               <Timer className="h-5 w-5 text-[#ea384c]" />
               <span className="text-sm text-white">
-                Flight Time: {elapsedTime}
+                {flightEndTime ? 'Total Flight Time: ' : 'Flight Time: '}{elapsedTime}
               </span>
             </div>
             {isFlightActive ? (
