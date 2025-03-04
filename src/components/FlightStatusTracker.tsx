@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Timer, PlaneTakeoff, Navigation, ArrowDown, MapPin, Check, Users } from 'lucide-react';
+import { Timer, PlaneTakeoff, Navigation, ArrowDown, MapPin, Check, Users, ListCheck } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { useLocation, Navigate } from 'react-router-dom';
 
@@ -29,7 +29,7 @@ const flightPhases: FlightPhase[] = [
 
 export const FlightStatusTracker = () => {
   const location = useLocation();
-  const { departure, arrival } = location.state || {};
+  const { departure, arrival, flightType } = location.state || {};
 
   if (!departure || !arrival) {
     return <Navigate to="/" replace />;
@@ -106,6 +106,7 @@ export const FlightStatusTracker = () => {
           <h1 className="text-3xl font-semibold text-white">Air Canada Flight Status</h1>
           <div className="text-[#ea384c] space-y-1">
             <p>From: {departure} - To: {arrival}</p>
+            <p>Flight Type: {flightType}</p>
             <p>Current Phase: {flightPhases.find(phase => phase.id === currentStatus)?.label}</p>
           </div>
         </div>
@@ -126,6 +127,45 @@ export const FlightStatusTracker = () => {
             ))}
           </div>
         </Card>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <Users className="h-5 w-5 text-[#ea384c]" />
+                Cabin Panel
+              </h2>
+            </div>
+            <div className="text-white/80">
+              <p>Flight Type: {flightType}</p>
+              <p>Departure: {departure}</p>
+              <p>Arrival: {arrival}</p>
+            </div>
+          </Card>
+
+          <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <ListCheck className="h-5 w-5 text-[#ea384c]" />
+                Flight Check List
+              </h2>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-white/80">
+                <Check className="h-4 w-4 text-[#ea384c]" />
+                <span>Pre-flight checks complete</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/80">
+                <Check className="h-4 w-4 text-[#ea384c]" />
+                <span>Safety briefing completed</span>
+              </div>
+              <div className="flex items-center gap-2 text-white/80">
+                <Check className="h-4 w-4 text-[#ea384c]" />
+                <span>Cabin secured</span>
+              </div>
+            </div>
+          </Card>
+        </div>
 
         <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
           <div className="flex items-center justify-between">
