@@ -5,6 +5,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { ListCheck, LayoutPanelLeft, Users } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const validateICAO = (code: string) => {
   // ICAO codes are 4 letters
@@ -15,16 +23,17 @@ const validateICAO = (code: string) => {
 export const FlightDetailsForm = () => {
   const [departure, setDeparture] = React.useState('');
   const [arrival, setArrival] = React.useState('');
+  const [flightType, setFlightType] = React.useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!departure || !arrival) {
+    if (!departure || !arrival || !flightType) {
       toast({
         title: "Error",
-        description: "Please fill in both departure and arrival airports",
+        description: "Please fill in all fields",
         variant: "destructive",
       });
       return;
@@ -58,7 +67,7 @@ export const FlightDetailsForm = () => {
     }
 
     navigate('/flight-status', { 
-      state: { departure, arrival }
+      state: { departure, arrival, flightType }
     });
   };
 
@@ -100,14 +109,54 @@ export const FlightDetailsForm = () => {
                   maxLength={4}
                 />
               </div>
+
+              <div>
+                <label htmlFor="flightType" className="block text-sm font-medium text-white mb-2">
+                  Flight Type
+                </label>
+                <Select value={flightType} onValueChange={setFlightType}>
+                  <SelectTrigger className="w-full bg-black/50 border-[#ea384c]/20 text-white">
+                    <SelectValue placeholder="Select flight type" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-black/90 border-[#ea384c]/20">
+                    <SelectItem value="cargo" className="text-white hover:bg-[#ea384c]/20">Cargo</SelectItem>
+                    <SelectItem value="jets" className="text-white hover:bg-[#ea384c]/20">Jets</SelectItem>
+                    <SelectItem value="express" className="text-white hover:bg-[#ea384c]/20">Express</SelectItem>
+                    <SelectItem value="rouge" className="text-white hover:bg-[#ea384c]/20">Rouge</SelectItem>
+                    <SelectItem value="main" className="text-white hover:bg-[#ea384c]/20">Main</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <Button 
-              type="submit"
-              className="w-full bg-[#ea384c] hover:bg-[#ea384c]/90"
-            >
-              Start Flight
-            </Button>
+            <div className="grid grid-cols-3 gap-4">
+              <Button 
+                type="submit"
+                className="col-span-3 bg-[#ea384c] hover:bg-[#ea384c]/90"
+              >
+                Start Flight
+              </Button>
+              
+              <Button 
+                type="button"
+                variant="outline" 
+                className="border-[#ea384c]/20 text-white hover:bg-[#ea384c]/20"
+                onClick={() => navigate('/cabin-panel')}
+              >
+                <Users className="mr-2" />
+                Cabin Panel
+              </Button>
+              
+              <Button 
+                type="button"
+                variant="outline"
+                className="col-span-2 border-[#ea384c]/20 text-white hover:bg-[#ea384c]/20"
+                onClick={() => navigate('/checklist')}
+              >
+                <ListCheck className="mr-2" />
+                Flight Check List
+              </Button>
+            </div>
           </form>
         </Card>
       </div>
