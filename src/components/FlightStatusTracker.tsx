@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Timer, PlaneTakeoff, Navigation, ArrowDown, MapPin, Check, Users } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { useLocation, Navigate } from 'react-router-dom';
 
 type FlightStatus = 'boarding' | 'taxi-out' | 'departure' | 'cruise' | 'descent' | 'approach' | 'taxi-in' | 'parked' | 'deboarding';
 
@@ -27,6 +28,13 @@ const flightPhases: FlightPhase[] = [
 ];
 
 export const FlightStatusTracker = () => {
+  const location = useLocation();
+  const { departure, arrival } = location.state || {};
+
+  if (!departure || !arrival) {
+    return <Navigate to="/" replace />;
+  }
+
   const [currentStatus, setCurrentStatus] = useState<FlightStatus>('boarding');
   const [flightStartTime, setFlightStartTime] = useState<Date | null>(null);
   const [flightEndTime, setFlightEndTime] = useState<Date | null>(null);
@@ -96,7 +104,10 @@ export const FlightStatusTracker = () => {
       <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-semibold text-white">Air Canada Flight Status</h1>
-          <p className="text-[#ea384c]">Current Phase: {flightPhases.find(phase => phase.id === currentStatus)?.label}</p>
+          <div className="text-[#ea384c] space-y-1">
+            <p>From: {departure} - To: {arrival}</p>
+            <p>Current Phase: {flightPhases.find(phase => phase.id === currentStatus)?.label}</p>
+          </div>
         </div>
 
         <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">

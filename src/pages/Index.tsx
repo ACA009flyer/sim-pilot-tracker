@@ -1,8 +1,8 @@
 
-import { FlightStatusTracker } from "@/components/FlightStatusTracker";
+import { FlightDetailsForm } from "@/components/FlightDetailsForm";
 
 const Index = () => {
-  return <FlightStatusTracker />;
+  return <FlightDetailsForm />;
 };
 
 export default Index;
