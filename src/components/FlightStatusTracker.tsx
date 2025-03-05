@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Timer, PlaneTakeoff, Navigation, ArrowDown, MapPin, Check, Users, ListCheck } from 'lucide-react';
+import { Timer, PlaneTakeoff, Navigation, ArrowDown, MapPin, Check, Users, ListCheck, Music2, VolumeX } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { useLocation, Navigate } from 'react-router-dom';
 
@@ -30,6 +30,10 @@ const flightPhases: FlightPhase[] = [
 export const FlightStatusTracker = () => {
   const location = useLocation();
   const { departure, arrival, flightType } = location.state || {};
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [flightStarted, setFlightStarted] = useState(false);
 
   if (!departure || !arrival) {
     return <Navigate to="/" replace />;
@@ -69,6 +73,7 @@ export const FlightStatusTracker = () => {
     
     if (newStatus === 'taxi-out' && !flightStartTime) {
       setFlightStartTime(new Date());
+      setFlightStarted(true);
       toast({
         title: "Flight Timer Started",
         description: "The flight timer has begun.",
@@ -87,14 +92,33 @@ export const FlightStatusTracker = () => {
     });
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setAudioUrl(url);
+    }
+  };
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
   const getStatusColor = (status: FlightStatus) => {
     const phases = flightPhases.map(phase => phase.id);
     const currentIndex = phases.indexOf(currentStatus);
     const statusIndex = phases.indexOf(status);
 
-    if (status === currentStatus) return "bg-[#ea384c] text-white";
-    if (statusIndex < currentIndex) return "bg-black/90 text-white";
-    return "bg-gray-600/40 text-white/80";
+    if (status === currentStatus) return "bg-[#ea384c] text-black font-bold";
+    if (statusIndex < currentIndex) return "bg-black/90 text-[#ea384c] font-bold";
+    return "bg-gray-600/40 text-black font-bold";
   };
 
   const isFlightActive = flightStartTime && !flightEndTime;
@@ -109,82 +133,126 @@ export const FlightStatusTracker = () => {
             <p>Flight Type: {flightType}</p>
             <p>Current Phase: {flightPhases.find(phase => phase.id === currentStatus)?.label}</p>
           </div>
-        </div>
 
-        <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-          <div className="grid grid-cols-3 gap-4">
-            {flightPhases.map((phase) => (
+          <div className="mt-4 flex justify-center gap-4">
+            <input
+              type="file"
+              accept="audio/*"
+              onChange={handleFileChange}
+              className="hidden"
+              id="audio-upload"
+            />
+            <label
+              htmlFor="audio-upload"
+              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#ea384c] text-white rounded-md hover:bg-[#ea384c]/90"
+            >
+              <Music2 className="h-5 w-5" />
+              Upload Music
+            </label>
+            {audioUrl && (
               <Button
-                key={phase.id}
-                onClick={() => updateStatus(phase.id)}
-                className={`h-24 flex flex-col items-center justify-center gap-2 transition-all duration-300 ${
-                  getStatusColor(phase.id)
-                }`}
+                onClick={togglePlay}
+                className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90"
               >
-                <phase.icon className="h-6 w-6" />
-                <span className="text-sm font-medium">{phase.label}</span>
+                {isPlaying ? <VolumeX className="h-5 w-5" /> : <Music2 className="h-5 w-5" />}
+                {isPlaying ? 'Stop Music' : 'Play Music'}
               </Button>
-            ))}
+            )}
           </div>
-        </Card>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Users className="h-5 w-5 text-[#ea384c]" />
-                Cabin Panel
-              </h2>
-            </div>
-            <div className="text-white/80">
-              <p>Flight Type: {flightType}</p>
-              <p>Departure: {departure}</p>
-              <p>Arrival: {arrival}</p>
-            </div>
-          </Card>
-
-          <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                <ListCheck className="h-5 w-5 text-[#ea384c]" />
-                Flight Check List
-              </h2>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-white/80">
-                <Check className="h-4 w-4 text-[#ea384c]" />
-                <span>Pre-flight checks complete</span>
-              </div>
-              <div className="flex items-center gap-2 text-white/80">
-                <Check className="h-4 w-4 text-[#ea384c]" />
-                <span>Safety briefing completed</span>
-              </div>
-              <div className="flex items-center gap-2 text-white/80">
-                <Check className="h-4 w-4 text-[#ea384c]" />
-                <span>Cabin secured</span>
-              </div>
-            </div>
-          </Card>
+          <audio ref={audioRef} src={audioUrl || ''} />
         </div>
 
-        <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Timer className="h-5 w-5 text-[#ea384c]" />
-              <span className="text-sm text-white">
-                {flightEndTime ? 'Total Flight Time: ' : 'Flight Time: '}{elapsedTime}
-              </span>
+        {flightStarted && (
+          <>
+            <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+              <div className="grid grid-cols-3 gap-4">
+                {flightPhases.map((phase) => (
+                  <Button
+                    key={phase.id}
+                    onClick={() => updateStatus(phase.id)}
+                    className={`h-24 flex flex-col items-center justify-center gap-2 transition-all duration-300 ${
+                      getStatusColor(phase.id)
+                    }`}
+                  >
+                    <phase.icon className="h-6 w-6" />
+                    <span className="text-sm font-medium">{phase.label}</span>
+                  </Button>
+                ))}
+              </div>
+            </Card>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <Users className="h-5 w-5 text-[#ea384c]" />
+                    Cabin Panel
+                  </h2>
+                </div>
+                <div className="text-white/80">
+                  <p>Flight Type: {flightType}</p>
+                  <p>Departure: {departure}</p>
+                  <p>Arrival: {arrival}</p>
+                </div>
+              </Card>
+
+              <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <ListCheck className="h-5 w-5 text-[#ea384c]" />
+                    Flight Check List
+                  </h2>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-white/80">
+                    <Check className="h-4 w-4 text-[#ea384c]" />
+                    <span>Pre-flight checks complete</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-white/80">
+                    <Check className="h-4 w-4 text-[#ea384c]" />
+                    <span>Safety briefing completed</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-white/80">
+                    <Check className="h-4 w-4 text-[#ea384c]" />
+                    <span>Cabin secured</span>
+                  </div>
+                </div>
+              </Card>
             </div>
-            {isFlightActive ? (
-              <Badge 
-                variant="outline" 
-                className="text-[#ea384c] border-[#ea384c]"
+
+            <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Timer className="h-5 w-5 text-[#ea384c]" />
+                  <span className="text-sm text-white">
+                    {flightEndTime ? 'Total Flight Time: ' : 'Flight Time: '}{elapsedTime}
+                  </span>
+                </div>
+                {isFlightActive ? (
+                  <Badge 
+                    variant="outline" 
+                    className="text-[#ea384c] border-[#ea384c]"
+                  >
+                    Active Flight
+                  </Badge>
+                ) : null}
+              </div>
+            </Card>
+          </>
+        )}
+
+        {!flightStarted && (
+          <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+            <div className="text-center">
+              <Button
+                onClick={() => updateStatus('taxi-out')}
+                className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90"
               >
-                Active Flight
-              </Badge>
-            ) : null}
-          </div>
-        </Card>
+                Start Flight
+              </Button>
+            </div>
+          </Card>
+        )}
       </div>
     </div>
   );
