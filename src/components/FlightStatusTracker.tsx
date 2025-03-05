@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Timer, PlaneTakeoff, Navigation, ArrowDown, MapPin, Check, Users, ListCheck, Music2, VolumeX } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { useLocation, Navigate } from 'react-router-dom';
+import { CabinPanel } from "@/components/CabinPanel";
 
 type FlightStatus = 'boarding' | 'taxi-out' | 'departure' | 'cruise' | 'descent' | 'approach' | 'taxi-in' | 'parked' | 'deboarding';
 
@@ -183,17 +184,7 @@ export const FlightStatusTracker = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Users className="h-5 w-5 text-[#ea384c]" />
-                    Cabin Panel
-                  </h2>
-                </div>
-                <div className="text-white/80">
-                  <p>Flight Type: {flightType}</p>
-                  <p>Departure: {departure}</p>
-                  <p>Arrival: {arrival}</p>
-                </div>
+                <CabinPanel flightType={flightType} />
               </Card>
 
               <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">

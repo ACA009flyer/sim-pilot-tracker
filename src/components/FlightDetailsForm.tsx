@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
@@ -129,34 +128,12 @@ export const FlightDetailsForm = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <Button 
-                type="submit"
-                className="col-span-3 bg-[#ea384c] hover:bg-[#ea384c]/90"
-              >
-                Start Flight
-              </Button>
-              
-              <Button 
-                type="button"
-                variant="outline" 
-                className="border-[#ea384c]/20 text-white hover:bg-[#ea384c]/20"
-                onClick={() => navigate('/cabin-panel')}
-              >
-                <Users className="mr-2" />
-                Cabin Panel
-              </Button>
-              
-              <Button 
-                type="button"
-                variant="outline"
-                className="col-span-2 border-[#ea384c]/20 text-white hover:bg-[#ea384c]/20"
-                onClick={() => navigate('/checklist')}
-              >
-                <ListCheck className="mr-2" />
-                Flight Check List
-              </Button>
-            </div>
+            <Button 
+              type="submit"
+              className="w-full bg-[#ea384c] hover:bg-[#ea384c]/90"
+            >
+              Start Flight
+            </Button>
           </form>
         </Card>
       </div>
