@@ -3,10 +3,11 @@ import { useLocation, Navigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ListCheck, Check } from 'lucide-react';
 import { FlightHeader } from './flight/FlightHeader';
 import { FlightPhasesPanel, flightPhases } from './flight/FlightPhasesPanel';
 import { FlightTimer } from './flight/FlightTimer';
-import { CabinPanel } from "./CabinPanel";
+import { CheckList } from './flight/CheckList';
 import type { FlightStatus } from '@/types/flight';
 
 export const FlightStatusTracker = () => {
@@ -94,28 +95,7 @@ export const FlightStatusTracker = () => {
                 <CabinPanel flightType={flightType} />
               </Card>
 
-              <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <ListCheck className="h-5 w-5 text-[#ea384c]" />
-                    Flight Check List
-                  </h2>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Check className="h-4 w-4 text-[#ea384c]" />
-                    <span>Pre-flight checks complete</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Check className="h-4 w-4 text-[#ea384c]" />
-                    <span>Safety briefing completed</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Check className="h-4 w-4 text-[#ea384c]" />
-                    <span>Cabin secured</span>
-                  </div>
-                </div>
-              </Card>
+              <CheckList />
             </div>
 
             <FlightTimer 
