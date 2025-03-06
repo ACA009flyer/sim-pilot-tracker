@@ -1,32 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Timer, PlaneTakeoff, Navigation, ArrowDown, MapPin, Check, Users, ListCheck, Music2, VolumeX } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useLocation, Navigate } from 'react-router-dom';
 import { CabinPanel } from "@/components/CabinPanel";
-
-type FlightStatus = 'boarding' | 'taxi-out' | 'departure' | 'cruise' | 'descent' | 'approach' | 'taxi-in' | 'parked' | 'deboarding';
-
-interface FlightPhase {
-  id: FlightStatus;
-  label: string;
-  icon: React.ElementType;
-  time?: Date;
-}
-
-const flightPhases: FlightPhase[] = [
-  { id: 'boarding', label: 'Boarding', icon: Users },
-  { id: 'taxi-out', label: 'Taxi Out', icon: Navigation },
-  { id: 'departure', label: 'Departure', icon: PlaneTakeoff },
-  { id: 'cruise', label: 'Cruise', icon: Navigation },
-  { id: 'descent', label: 'Descent', icon: ArrowDown },
-  { id: 'approach', label: 'Approach', icon: PlaneTakeoff },
-  { id: 'taxi-in', label: 'Taxi In', icon: Navigation },
-  { id: 'parked', label: 'Parked', icon: MapPin },
-  { id: 'deboarding', label: 'Deboarding', icon: Users },
-];
+import { FlightHeader } from './flight/FlightHeader';
+import { FlightPhases, type FlightStatus, flightPhases } from './flight/FlightPhases';
+import { FlightTimer } from './flight/FlightTimer';
 
 export const FlightStatusTracker = () => {
   const location = useLocation();
@@ -34,16 +14,15 @@ export const FlightStatusTracker = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [flightStarted, setFlightStarted] = useState(false);
-
-  if (!departure || !arrival) {
-    return <Navigate to="/" replace />;
-  }
-
   const [currentStatus, setCurrentStatus] = useState<FlightStatus>('boarding');
   const [flightStartTime, setFlightStartTime] = useState<Date | null>(null);
   const [flightEndTime, setFlightEndTime] = useState<Date | null>(null);
   const [elapsedTime, setElapsedTime] = useState<string>('00:00');
   const { toast } = useToast();
+
+  if (!departure || !arrival) {
+    return <Navigate to="/" replace />;
+  }
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -103,62 +82,27 @@ export const FlightStatusTracker = () => {
     }
   };
 
-  const getStatusColor = (status: FlightStatus) => {
-    const phases = flightPhases.map(phase => phase.id);
-    const currentIndex = phases.indexOf(currentStatus);
-    const statusIndex = phases.indexOf(status);
-
-    if (status === currentStatus) return "bg-[#ea384c] text-black font-bold";
-    if (statusIndex < currentIndex) return "bg-black/90 text-[#ea384c] font-bold";
-    return "bg-gray-600/40 text-black font-bold";
-  };
-
+  const currentPhase = flightPhases.find(phase => phase.id === currentStatus)?.label || '';
   const isFlightActive = flightStartTime && !flightEndTime;
 
   return (
     <div className="min-h-screen bg-black/95 p-6">
       <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-semibold text-white">Air Canada Flight Status</h1>
-          <div className="text-[#ea384c] space-y-1">
-            <p>From: {departure} - To: {arrival}</p>
-            <p>Flight Type: {flightType}</p>
-            <p>Current Phase: {flightPhases.find(phase => phase.id === currentStatus)?.label}</p>
-          </div>
-
-          <div className="mt-4 flex justify-center gap-4">
-            <Button
-              onClick={togglePlay}
-              className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90"
-            >
-              {isPlaying ? <VolumeX className="h-5 w-5" /> : <Music2 className="h-5 w-5" />}
-              {isPlaying ? 'Stop Safety Instructions' : 'Play Safety Instructions'}
-            </Button>
-          </div>
-          <audio 
-            ref={audioRef} 
-            src="/Cabin Safety Instruction Sound (1).mp3"
-          />
-        </div>
+        <FlightHeader 
+          departure={departure}
+          arrival={arrival}
+          flightType={flightType}
+          currentPhase={currentPhase}
+          isPlaying={isPlaying}
+          onTogglePlay={togglePlay}
+        />
 
         {flightStarted && (
           <>
-            <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-              <div className="grid grid-cols-3 gap-4">
-                {flightPhases.map((phase) => (
-                  <Button
-                    key={phase.id}
-                    onClick={() => updateStatus(phase.id)}
-                    className={`h-24 flex flex-col items-center justify-center gap-2 transition-all duration-300 ${
-                      getStatusColor(phase.id)
-                    }`}
-                  >
-                    <phase.icon className="h-6 w-6" />
-                    <span className="text-sm font-medium">{phase.label}</span>
-                  </Button>
-                ))}
-              </div>
-            </Card>
+            <FlightPhases
+              currentStatus={currentStatus}
+              onUpdateStatus={updateStatus}
+            />
 
             <div className="grid grid-cols-2 gap-4">
               <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
@@ -189,24 +133,10 @@ export const FlightStatusTracker = () => {
               </Card>
             </div>
 
-            <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Timer className="h-5 w-5 text-[#ea384c]" />
-                  <span className="text-sm text-white">
-                    {flightEndTime ? 'Total Flight Time: ' : 'Flight Time: '}{elapsedTime}
-                  </span>
-                </div>
-                {isFlightActive ? (
-                  <Badge 
-                    variant="outline" 
-                    className="text-[#ea384c] border-[#ea384c]"
-                  >
-                    Active Flight
-                  </Badge>
-                ) : null}
-              </div>
-            </Card>
+            <FlightTimer
+              elapsedTime={elapsedTime}
+              isFlightActive={isFlightActive}
+            />
           </>
         )}
 
