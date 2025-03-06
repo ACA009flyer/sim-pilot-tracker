@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -7,6 +7,7 @@ import { CabinPanel } from "@/components/CabinPanel";
 import { FlightHeader } from './flight/FlightHeader';
 import { FlightPhases, type FlightStatus, flightPhases } from './flight/FlightPhases';
 import { FlightTimer } from './flight/FlightTimer';
+import { FlightAudio } from './flight/FlightAudio';
 import { ListCheck, Check } from 'lucide-react';
 
 export const FlightStatusTracker = () => {
@@ -105,11 +106,9 @@ export const FlightStatusTracker = () => {
               onUpdateStatus={updateStatus}
             />
 
-            <div className="grid grid-cols-2 gap-4">
-              <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-                <CabinPanel flightType={flightType} />
-              </Card>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FlightAudio currentStatus={currentStatus} />
+              
               <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-white flex items-center gap-2">
