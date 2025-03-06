@@ -33,7 +33,6 @@ export const FlightStatusTracker = () => {
   const { departure, arrival, flightType } = location.state || {};
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [flightStarted, setFlightStarted] = useState(false);
 
   if (!departure || !arrival) {
@@ -136,31 +135,18 @@ export const FlightStatusTracker = () => {
           </div>
 
           <div className="mt-4 flex justify-center gap-4">
-            <input
-              type="file"
-              accept="audio/*"
-              onChange={handleFileChange}
-              className="hidden"
-              id="audio-upload"
-            />
-            <label
-              htmlFor="audio-upload"
-              className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#ea384c] text-white rounded-md hover:bg-[#ea384c]/90"
+            <Button
+              onClick={togglePlay}
+              className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90"
             >
-              <Music2 className="h-5 w-5" />
-              Upload Music
-            </label>
-            {audioUrl && (
-              <Button
-                onClick={togglePlay}
-                className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90"
-              >
-                {isPlaying ? <VolumeX className="h-5 w-5" /> : <Music2 className="h-5 w-5" />}
-                {isPlaying ? 'Stop Music' : 'Play Music'}
-              </Button>
-            )}
+              {isPlaying ? <VolumeX className="h-5 w-5" /> : <Music2 className="h-5 w-5" />}
+              {isPlaying ? 'Stop Safety Instructions' : 'Play Safety Instructions'}
+            </Button>
           </div>
-          <audio ref={audioRef} src={audioUrl || ''} />
+          <audio 
+            ref={audioRef} 
+            src="/Cabin Safety Instruction Sound (1).mp3"
+          />
         </div>
 
         {flightStarted && (
