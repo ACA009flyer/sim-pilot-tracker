@@ -92,14 +92,6 @@ export const FlightStatusTracker = () => {
     });
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setAudioUrl(url);
-    }
-  };
-
   const togglePlay = () => {
     if (audioRef.current) {
       if (isPlaying) {
