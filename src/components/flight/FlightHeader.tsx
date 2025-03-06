@@ -1,6 +1,7 @@
 
 import { Music2, VolumeX } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { useRef, useEffect } from 'react';
 
 interface FlightHeaderProps {
   departure: string;
@@ -19,6 +20,18 @@ export const FlightHeader = ({
   isPlaying,
   onTogglePlay 
 }: FlightHeaderProps) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.play().catch(console.error);
+      } else {
+        audioRef.current.pause();
+      }
+    }
+  }, [isPlaying]);
+
   return (
     <div className="text-center space-y-2">
       <h1 className="text-3xl font-semibold text-white">Air Canada Flight Status</h1>
@@ -38,6 +51,7 @@ export const FlightHeader = ({
         </Button>
       </div>
       <audio 
+        ref={audioRef}
         src="/Cabin Safety Instruction Sound (1).mp3"
       />
     </div>
