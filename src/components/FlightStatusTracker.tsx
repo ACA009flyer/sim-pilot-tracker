@@ -7,6 +7,7 @@ import { CabinPanel } from "@/components/CabinPanel";
 import { FlightHeader } from './flight/FlightHeader';
 import { FlightPhases, type FlightStatus, flightPhases } from './flight/FlightPhases';
 import { FlightTimer } from './flight/FlightTimer';
+import { ListCheck, Check } from 'lucide-react';
 
 export const FlightStatusTracker = () => {
   const location = useLocation();
