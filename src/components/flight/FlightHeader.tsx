@@ -1,4 +1,3 @@
-
 import { Music2, VolumeX } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useRef, useEffect } from 'react';
@@ -52,7 +51,7 @@ export const FlightHeader = ({
       </div>
       <audio 
         ref={audioRef}
-        src="/Cabin Safety Instruction Sound (1).mp3"
+        src={new URL('/Cabin Safety Instruction Sound (1).mp3', import.meta.url).href}
       />
     </div>
   );
