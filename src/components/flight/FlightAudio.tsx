@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,9 +12,7 @@ import {
   Utensils,
   Navigation,
   MapPin,
-  HeadphonesIcon,
-  Volume2,
-  VolumeX
+  HeadphonesIcon
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,10 +24,6 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const navigate = useNavigate();
-
-  const getAudioUrl = (filename: string) => {
-    return new URL(`/${filename}`, import.meta.url).href;
-  };
 
   useEffect(() => {
     return () => {
@@ -46,7 +41,8 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         audioRef.current.currentTime = 0;
         setCurrentAudio(null);
       } else {
-        audioRef.current.src = getAudioUrl(audioFile);
+        // Use relative path for audio files
+        audioRef.current.src = `/${audioFile}`;
         audioRef.current.play().catch(console.error);
         setCurrentAudio(audioFile);
       }
@@ -190,3 +186,4 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
     </Card>
   );
 };
+
