@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
@@ -8,7 +8,7 @@ import { FlightHeader } from './flight/FlightHeader';
 import { FlightPhases, type FlightStatus, flightPhases } from './flight/FlightPhases';
 import { FlightTimer } from './flight/FlightTimer';
 import { FlightAudio } from './flight/FlightAudio';
-import { ListCheck, Check } from 'lucide-react';
+import { CheckList } from './flight/CheckList';
 
 export const FlightStatusTracker = () => {
   const location = useLocation();
@@ -52,7 +52,7 @@ export const FlightStatusTracker = () => {
     setCurrentStatus(newStatus);
     const phase = flightPhases.find(phase => phase.id === newStatus);
     
-    if (newStatus === 'taxi-out' && !flightStartTime) {
+    if (newStatus === 'taxi-out') {
       setFlightStartTime(new Date());
       setFlightStarted(true);
       toast({
@@ -108,29 +108,7 @@ export const FlightStatusTracker = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FlightAudio currentStatus={currentStatus} />
-              
-              <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <ListCheck className="h-5 w-5 text-[#ea384c]" />
-                    Flight Check List
-                  </h2>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Check className="h-4 w-4 text-[#ea384c]" />
-                    <span>Pre-flight checks complete</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Check className="h-4 w-4 text-[#ea384c]" />
-                    <span>Safety briefing completed</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-white/80">
-                    <Check className="h-4 w-4 text-[#ea384c]" />
-                    <span>Cabin secured</span>
-                  </div>
-                </div>
-              </Card>
+              <CheckList currentStatus={currentStatus} />
             </div>
 
             <FlightTimer
@@ -144,7 +122,7 @@ export const FlightStatusTracker = () => {
           <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
             <div className="text-center">
               <Button
-                onClick={() => updateStatus('taxi-out')}
+                onClick={() => setFlightStarted(true)}
                 className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90"
               >
                 Start Flight
