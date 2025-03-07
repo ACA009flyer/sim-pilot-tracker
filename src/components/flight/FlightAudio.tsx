@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -41,7 +40,6 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         audioRef.current.currentTime = 0;
         setCurrentAudio(null);
       } else {
-        // Use relative path for audio files
         audioRef.current.src = `/${audioFile}`;
         audioRef.current.play().catch(console.error);
         setCurrentAudio(audioFile);
@@ -77,7 +75,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (3)(1).MP3')}
+          onClick={() => handleAudioPlay('0303.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <Plane className="shrink-0 mr-2 h-4 w-4" />
@@ -85,7 +83,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (2).MP3')}
+          onClick={() => handleAudioPlay('0302.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <Navigation className="shrink-0 mr-2 h-4 w-4" />
@@ -93,7 +91,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (4).MP3')}
+          onClick={() => handleAudioPlay('0304.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <Plane className="shrink-0 mr-2 h-4 w-4" />
@@ -101,7 +99,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (5).MP3')}
+          onClick={() => handleAudioPlay('0305.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <CloudSun className="shrink-0 mr-2 h-4 w-4" />
@@ -109,7 +107,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (6).MP3')}
+          onClick={() => handleAudioPlay('0313.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <Compass className="shrink-0 mr-2 h-4 w-4" />
@@ -127,7 +125,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         )}
 
         <Button
-          onClick={() => handleAudioPlay('0306 (1).MP3')}
+          onClick={() => handleAudioPlay('0301.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <Wind className="shrink-0 mr-2 h-4 w-4" />
@@ -135,7 +133,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (8).MP3')}
+          onClick={() => handleAudioPlay('0308.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <AlertTriangle className="shrink-0 mr-2 h-4 w-4" />
@@ -143,7 +141,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (9).MP3')}
+          onClick={() => handleAudioPlay('0309.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <Plane className="shrink-0 mr-2 h-4 w-4" />
@@ -151,7 +149,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (10).MP3')}
+          onClick={() => handleAudioPlay('0310.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <Plane className="shrink-0 mr-2 h-4 w-4" />
@@ -159,7 +157,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (11).MP3')}
+          onClick={() => handleAudioPlay('0311.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <Navigation className="shrink-0 mr-2 h-4 w-4" />
@@ -175,7 +173,7 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0306 (12).MP3')}
+          onClick={() => handleAudioPlay('0307.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <MapPin className="shrink-0 mr-2 h-4 w-4" />
@@ -186,4 +184,3 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
     </Card>
   );
 };
-
