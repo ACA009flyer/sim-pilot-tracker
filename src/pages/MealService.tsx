@@ -1,4 +1,3 @@
-
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,6 +53,7 @@ const MealService = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { previousStatus, ...otherState } = location.state || {};
 
   const handlePrevious = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : mealOptions.length - 1));
@@ -64,7 +64,12 @@ const MealService = () => {
   };
 
   const handleServe = () => {
-    navigate('/flight-status', { state: { ...location.state } });
+    navigate('/flight-status', { 
+      state: { 
+        ...otherState,
+        currentStatus: previousStatus 
+      } 
+    });
   };
 
   const currentMeal = mealOptions[currentIndex];

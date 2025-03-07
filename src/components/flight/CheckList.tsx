@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ListCheck, Check, Square } from 'lucide-react';
@@ -102,7 +102,12 @@ interface CheckListProps {
 }
 
 export const CheckList = ({ currentStatus }: CheckListProps) => {
-  const [items, setItems] = useState(checklists[currentStatus] || []);
+  const [items, setItems] = useState<ChecklistItem[]>([]);
+
+  useEffect(() => {
+    // Reset checklist items when status changes
+    setItems(checklists[currentStatus]?.map(item => ({ ...item, checked: false })) || []);
+  }, [currentStatus]);
 
   const toggleItem = (index: number) => {
     const newItems = [...items];
