@@ -11,15 +11,17 @@ import {
   Utensils,
   Navigation,
   MapPin,
-  HeadphonesIcon
+  HeadphonesIcon,
+  Video
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface FlightAudioProps {
   currentStatus: string;
+  onAudioPlay: (isPlaying: boolean) => void;
 }
 
-export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
+export const FlightAudio = ({ currentStatus, onAudioPlay }: FlightAudioProps) => {
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const navigate = useNavigate();
@@ -39,10 +41,12 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
         setCurrentAudio(null);
+        onAudioPlay(false);
       } else {
         audioRef.current.src = `/${audioFile}`;
         audioRef.current.play().catch(console.error);
         setCurrentAudio(audioFile);
+        onAudioPlay(audioFile !== '0306.MP3');
       }
     }
   };
@@ -58,6 +62,30 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
   return (
     <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <Button
+          onClick={() => handleAudioPlay('0302.MP3')}
+          className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
+        >
+          <Navigation className="shrink-0 mr-2 h-4 w-4" />
+          <span className="text-xs">Gate Departure</span>
+        </Button>
+
+        <Button
+          onClick={() => handleAudioPlay('0303.MP3')}
+          className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
+        >
+          <Plane className="shrink-0 mr-2 h-4 w-4" />
+          <span className="text-xs">Pre-pushback</span>
+        </Button>
+
+        <Button
+          onClick={() => handleAudioPlay('0314.MP3')}
+          className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
+        >
+          <Video className="shrink-0 mr-2 h-4 w-4" />
+          <span className="text-xs">Safety Video</span>
+        </Button>
+
         <Button
           onClick={() => handleAudioPlay('0306.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
@@ -114,16 +142,6 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
           <span className="text-xs">Cruise</span>
         </Button>
 
-        {currentStatus === 'cruise' && (
-          <Button
-            onClick={handleMealService}
-            className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm col-span-2 md:col-span-3"
-          >
-            <Utensils className="shrink-0 mr-2 h-4 w-4" />
-            <span className="text-xs">Start Meal Service</span>
-          </Button>
-        )}
-
         <Button
           onClick={() => handleAudioPlay('0301.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
@@ -173,12 +191,22 @@ export const FlightAudio = ({ currentStatus }: FlightAudioProps) => {
         </Button>
 
         <Button
-          onClick={() => handleAudioPlay('0307.MP3')}
+          onClick={() => handleAudioPlay('0312.MP3')}
           className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm"
         >
           <MapPin className="shrink-0 mr-2 h-4 w-4" />
           <span className="text-xs">Parking</span>
         </Button>
+
+        {currentStatus === 'cruise' && (
+          <Button
+            onClick={handleMealService}
+            className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90 h-auto py-4 px-3 text-sm col-span-2 md:col-span-3"
+          >
+            <Utensils className="shrink-0 mr-2 h-4 w-4" />
+            <span className="text-xs">Start Meal Service</span>
+          </Button>
+        )}
       </div>
       <audio ref={audioRef} preload="auto" />
     </Card>

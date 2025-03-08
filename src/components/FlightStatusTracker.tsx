@@ -9,6 +9,7 @@ import { FlightPhases, type FlightStatus, flightPhases } from './flight/FlightPh
 import { FlightTimer } from './flight/FlightTimer';
 import { FlightAudio } from './flight/FlightAudio';
 import { CheckList } from './flight/CheckList';
+import { IFESystem } from './flight/IFESystem';
 
 export const FlightStatusTracker = () => {
   const location = useLocation();
@@ -20,6 +21,7 @@ export const FlightStatusTracker = () => {
   const [flightStartTime, setFlightStartTime] = useState<Date | null>(null);
   const [flightEndTime, setFlightEndTime] = useState<Date | null>(null);
   const [elapsedTime, setElapsedTime] = useState<string>('00:00');
+  const [isAnnouncement, setIsAnnouncement] = useState(false);
   const { toast } = useToast();
 
   if (!departure || !arrival) {
@@ -84,6 +86,10 @@ export const FlightStatusTracker = () => {
     }
   };
 
+  const handleAudioPlayback = (isPlaying: boolean) => {
+    setIsAnnouncement(isPlaying);
+  };
+
   const currentPhase = flightPhases.find(phase => phase.id === currentStatus)?.label || '';
   const isFlightActive = flightStartTime && !flightEndTime;
 
@@ -107,8 +113,11 @@ export const FlightStatusTracker = () => {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FlightAudio currentStatus={currentStatus} />
-              <CheckList currentStatus={currentStatus} />
+              <FlightAudio 
+                currentStatus={currentStatus}
+                onAudioPlay={handleAudioPlayback}
+              />
+              <IFESystem isAnnouncement={isAnnouncement} />
             </div>
 
             <FlightTimer
