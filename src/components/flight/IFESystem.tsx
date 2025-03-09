@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, Video, Music } from 'lucide-react';
@@ -11,10 +11,14 @@ interface IFESystemProps {
 export const IFESystem = ({ isAnnouncement }: IFESystemProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentMedia, setCurrentMedia] = useState<'movie' | 'music' | null>(null);
-
+  const audioRef = useRef<HTMLAudioElement>(null);
+  
   useEffect(() => {
     if (isAnnouncement && isPlaying) {
       setIsPlaying(false);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
     }
   }, [isAnnouncement]);
 
@@ -23,16 +27,24 @@ export const IFESystem = ({ isAnnouncement }: IFESystemProps) => {
     
     if (currentMedia === type && isPlaying) {
       setIsPlaying(false);
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
       setCurrentMedia(null);
     } else {
       setIsPlaying(true);
       setCurrentMedia(type);
+      if (type === 'music' && audioRef.current) {
+        audioRef.current.src = '/0306.MP3'; // Using the non-copyright boarding music
+        audioRef.current.play().catch(console.error);
+      }
     }
   };
 
   return (
     <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
       <h2 className="text-lg font-semibold text-white mb-4">Air Canada Entertainment</h2>
+      <audio ref={audioRef} loop />
       
       {isAnnouncement ? (
         <div className="text-center p-4 bg-[#ea384c]/10 rounded-lg">
