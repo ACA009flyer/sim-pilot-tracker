@@ -47,18 +47,6 @@ export const FlightStatusTracker = () => {
   const [showMealService, setShowMealService] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(mealOptions[0]);
   const [selectedDrink, setSelectedDrink] = useState("");
-  const [completedChecklist, setCompletedChecklist] = useState<string[]>([]);
-  const checklistItems = [
-    "Passenger boarding complete",
-    "Cabin doors closed",
-    "Safety demonstration completed",
-    "Taxi clearance received",
-    "Take-off clearance received",
-    "Cruise altitude reached",
-    "Landing preparations complete",
-    "Final approach checklist complete"
-  ];
-
   const { toast } = useToast();
 
   if (!departure || !arrival) {
@@ -101,22 +89,6 @@ export const FlightStatusTracker = () => {
     }
     return () => clearInterval(mealTimer);
   }, [servingMeal, mealTimeLeft]);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (flightStarted) {
-      const audio = new Audio('/0306.MP3');
-      audio.play().catch(console.error);
-      
-      timer = setTimeout(() => {
-        audio.pause();
-        audio.currentTime = 0;
-      }, 30000);
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [flightStarted]);
 
   const updateStatus = (newStatus: FlightStatus) => {
     setCurrentStatus(newStatus);
@@ -186,14 +158,6 @@ export const FlightStatusTracker = () => {
     setShowMealService(false);
   };
 
-  const toggleChecklistItem = (item: string) => {
-    setCompletedChecklist(prev =>
-      prev.includes(item)
-        ? prev.filter(i => i !== item)
-        : [...prev, item]
-    );
-  };
-
   const currentPhase = flightPhases.find(phase => phase.id === currentStatus)?.label || '';
   const isFlightActive = flightStartTime && !flightEndTime;
 
@@ -211,17 +175,10 @@ export const FlightStatusTracker = () => {
 
         {flightStarted && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FlightPhases
-                currentStatus={currentStatus}
-                onUpdateStatus={updateStatus}
-              />
-              <CheckList
-                items={checklistItems}
-                completedItems={completedChecklist}
-                onItemToggle={toggleChecklistItem}
-              />
-            </div>
+            <FlightPhases
+              currentStatus={currentStatus}
+              onUpdateStatus={updateStatus}
+            />
 
             {!servingMeal && !showMealService && (
               <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
