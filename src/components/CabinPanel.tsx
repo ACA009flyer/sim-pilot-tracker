@@ -18,16 +18,19 @@ export const CabinPanel = ({ flightType }: CabinPanelProps) => {
     if (audioRef.current) {
       if (isPlaying) {
         audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        setIsPlaying(false);
       } else {
         audioRef.current.play().catch(error => {
+          console.error("Audio playback error:", error);
           toast({
             title: "Playback Error",
             description: "There was an error playing the audio.",
             variant: "destructive",
           });
         });
+        setIsPlaying(true);
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -55,7 +58,7 @@ export const CabinPanel = ({ flightType }: CabinPanelProps) => {
           </Button>
         </div>
         
-        <audio ref={audioRef} src="/Cabin Safety Instruction Sound (1).mp3" />
+        <audio ref={audioRef} src="/0314.MP3" />
         <p className="text-sm text-white/80">Flight Type: {flightType}</p>
       </div>
     </Card>

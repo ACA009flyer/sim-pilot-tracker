@@ -12,11 +12,13 @@ interface FlightAudioProps {
 export const FlightAudio = ({ currentStatus, onAudioPlay }: FlightAudioProps) => {
   const { currentAudio, handleAudioPlay } = useAudioControl();
 
+  const handleAudioSelect = (file: string) => {
+    handleAudioPlay(file, onAudioPlay);
+  };
+
   return (
     <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-      <AudioButtonGrid 
-        onAudioSelect={(file) => handleAudioPlay(file, onAudioPlay)} 
-      />
+      <AudioButtonGrid onAudioSelect={handleAudioSelect} />
       <AudioControls currentAudio={currentAudio} onAudioPlay={onAudioPlay} />
     </Card>
   );

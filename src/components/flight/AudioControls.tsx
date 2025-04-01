@@ -10,31 +10,37 @@ export const AudioControls = ({ currentAudio, onAudioPlay }: AudioControlsProps)
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
+    if (currentAudio && audioRef.current) {
+      audioRef.current.src = `/${currentAudio}`;
+      audioRef.current.play().catch(error => {
+        console.error("Error playing audio:", error);
+        onAudioPlay(false);
+      });
+    }
+
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
       }
     };
-  }, []);
+  }, [currentAudio, onAudioPlay]);
 
-  const playAudio = (audioFile: string) => {
-    if (audioRef.current) {
-      if (currentAudio === audioFile && !audioRef.current.paused) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
+  useEffect(() => {
+    const audioElement = audioRef.current;
+    
+    if (audioElement) {
+      const handleEnded = () => {
         onAudioPlay(false);
-        return null;
-      } else {
-        audioRef.current.src = `/${audioFile}`;
-        audioRef.current.play().catch(console.error);
-        // Only set isAnnouncement to true if it's not boarding music
-        onAudioPlay(audioFile !== '0306.MP3');
-        return audioFile;
-      }
+      };
+      
+      audioElement.addEventListener('ended', handleEnded);
+      
+      return () => {
+        audioElement.removeEventListener('ended', handleEnded);
+      };
     }
-    return null;
-  };
+  }, [onAudioPlay]);
 
   return <audio ref={audioRef} preload="auto" />;
 };
