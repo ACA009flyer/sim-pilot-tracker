@@ -28,6 +28,7 @@ export const AudioControls = ({ currentAudio, onAudioPlay }: AudioControlsProps)
       } else {
         audioRef.current.src = `/${audioFile}`;
         audioRef.current.play().catch(console.error);
+        // Only set isAnnouncement to true if it's not boarding music
         onAudioPlay(audioFile !== '0306.MP3');
         return audioFile;
       }
@@ -47,6 +48,7 @@ export const useAudioControl = () => {
       onAudioPlay(false);
     } else {
       setCurrentAudio(audioFile);
+      // Only set isAnnouncement to true if it's not boarding music
       onAudioPlay(audioFile !== '0306.MP3');
     }
   };

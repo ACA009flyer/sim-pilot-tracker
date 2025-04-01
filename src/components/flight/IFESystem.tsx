@@ -11,22 +11,46 @@ interface IFESystemProps {
 export const IFESystem = ({ isAnnouncement }: IFESystemProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentMedia, setCurrentMedia] = useState<'movie' | 'music' | null>(null);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio('/0306.MP3');
+    setAudioElement(audio);
+    
+    return () => {
+      if (audio) {
+        audio.pause();
+        audio.src = '';
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isAnnouncement && isPlaying) {
+      if (audioElement) {
+        audioElement.pause();
+      }
       setIsPlaying(false);
     }
-  }, [isAnnouncement]);
+  }, [isAnnouncement, audioElement, isPlaying]);
 
   const toggleMedia = (type: 'movie' | 'music') => {
     if (isAnnouncement) return;
     
     if (currentMedia === type && isPlaying) {
       setIsPlaying(false);
+      if (type === 'music' && audioElement) {
+        audioElement.pause();
+      }
       setCurrentMedia(null);
     } else {
       setIsPlaying(true);
       setCurrentMedia(type);
+      
+      if (type === 'music' && audioElement) {
+        audioElement.currentTime = 0;
+        audioElement.play().catch(console.error);
+      }
     }
   };
 

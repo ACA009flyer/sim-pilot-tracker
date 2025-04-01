@@ -9,6 +9,7 @@ import {
   Navigation,
   MapPin,
   Video,
+  Utensils,
   LucideIcon
 } from 'lucide-react';
 
@@ -26,6 +27,7 @@ export const audioButtons: AudioButton[] = [
   { icon: Plane, label: 'Pre-takeoff', file: '0304.MP3' },
   { icon: CloudSun, label: 'Climb', file: '0305.MP3' },
   { icon: Compass, label: 'Cruise', file: '0313.MP3' },
+  { icon: Utensils, label: 'Meal Service', file: '0307.MP3' },
   { icon: Wind, label: 'Turbulence', file: '0301.MP3' },
   { icon: AlertTriangle, label: 'Beginning Descent', file: '0308.MP3' },
   { icon: Plane, label: 'Approach', file: '0309.MP3' },

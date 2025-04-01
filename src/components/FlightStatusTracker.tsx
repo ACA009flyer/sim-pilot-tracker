@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { FlightPhases, type FlightStatus, flightPhases } from './flight/FlightPh
 import { FlightTimer } from './flight/FlightTimer';
 import { FlightAudio } from './flight/FlightAudio';
 import { IFESystem } from './flight/IFESystem';
+import { CheckList } from './flight/CheckList';
 import { Utensils } from 'lucide-react';
 
 const mealOptions = [
@@ -47,11 +49,27 @@ export const FlightStatusTracker = () => {
   const [showMealService, setShowMealService] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState(mealOptions[0]);
   const [selectedDrink, setSelectedDrink] = useState("");
+  const [canServeMeal, setCanServeMeal] = useState(true);
+  const [servingMealAudio, setServingMealAudio] = useState(false);
   const { toast } = useToast();
+  const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
 
   if (!departure || !arrival) {
     return <Navigate to="/" replace />;
   }
+
+  useEffect(() => {
+    // Create audio element for meal service
+    const audio = new Audio('/0307.MP3');
+    setAudioRef(audio);
+    
+    return () => {
+      if (audio) {
+        audio.pause();
+        audio.src = '';
+      }
+    };
+  }, []);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -75,6 +93,7 @@ export const FlightStatusTracker = () => {
     };
   }, [flightStartTime, flightEndTime]);
 
+  // Handle meal service timer
   useEffect(() => {
     let mealTimer: NodeJS.Timeout;
     if (servingMeal && mealTimeLeft > 0) {
@@ -89,6 +108,23 @@ export const FlightStatusTracker = () => {
     }
     return () => clearInterval(mealTimer);
   }, [servingMeal, mealTimeLeft]);
+
+  // Play boarding music when flight starts
+  useEffect(() => {
+    if (flightStarted && currentStatus === 'boarding') {
+      const boardingMusic = new Audio('/0306.MP3');
+      boardingMusic.play().catch(console.error);
+      
+      const timer = setTimeout(() => {
+        boardingMusic.pause();
+      }, 30000); // Play for 30 seconds
+      
+      return () => {
+        clearTimeout(timer);
+        boardingMusic.pause();
+      };
+    }
+  }, [flightStarted, currentStatus]);
 
   const updateStatus = (newStatus: FlightStatus) => {
     setCurrentStatus(newStatus);
@@ -132,6 +168,7 @@ export const FlightStatusTracker = () => {
     window.history.replaceState({}, '', window.location.pathname);
     window.history.pushState(newState, '', window.location.pathname);
     setMealTimeLeft(600);
+    setCanServeMeal(true);
     toast({
       title: "Meal Service Cleared",
       description: "You can now start a new meal service.",
@@ -148,6 +185,22 @@ export const FlightStatusTracker = () => {
       return;
     }
 
+    // Play meal service announcement
+    if (audioRef) {
+      audioRef.currentTime = 0;
+      audioRef.play().catch(console.error);
+      setServingMealAudio(true);
+      
+      // Set announcement state temporarily
+      setIsAnnouncement(true);
+      
+      // Clear the announcement state after audio ends
+      audioRef.onended = () => {
+        setServingMealAudio(false);
+        setIsAnnouncement(false);
+      };
+    }
+
     const newState = { ...location.state, servingMeal: true, mealDetails: {
       meal: selectedMeal,
       drink: selectedDrink,
@@ -156,10 +209,12 @@ export const FlightStatusTracker = () => {
     window.history.replaceState({}, '', window.location.pathname);
     window.history.pushState(newState, '', window.location.pathname);
     setShowMealService(false);
+    setCanServeMeal(false);
   };
 
   const currentPhase = flightPhases.find(phase => phase.id === currentStatus)?.label || '';
   const isFlightActive = flightStartTime && !flightEndTime;
+  const showMealButton = currentStatus === 'cruise' && !servingMeal && !showMealService && canServeMeal;
 
   return (
     <div className="min-h-screen bg-black/95 p-6">
@@ -180,19 +235,23 @@ export const FlightStatusTracker = () => {
               onUpdateStatus={updateStatus}
             />
 
-            {!servingMeal && !showMealService && (
-              <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
-                <div className="text-center">
-                  <Button
-                    onClick={() => setShowMealService(true)}
-                    className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90"
-                  >
-                    <Utensils className="mr-2 h-4 w-4" />
-                    Start Meal Service
-                  </Button>
-                </div>
-              </Card>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <CheckList currentStatus={currentStatus} />
+
+              {showMealButton && (
+                <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
+                  <div className="text-center h-full flex flex-col justify-center">
+                    <Button
+                      onClick={() => setShowMealService(true)}
+                      className="bg-[#ea384c] text-white hover:bg-[#ea384c]/90"
+                    >
+                      <Utensils className="mr-2 h-4 w-4" />
+                      Start Meal Service
+                    </Button>
+                  </div>
+                </Card>
+              )}
+            </div>
 
             {showMealService && !servingMeal && (
               <Card className="p-6 bg-black/80 shadow-lg rounded-xl border-[#ea384c]/20">
