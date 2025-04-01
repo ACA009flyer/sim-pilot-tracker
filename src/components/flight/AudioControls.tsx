@@ -12,6 +12,10 @@ export const AudioControls = ({ currentAudio, onAudioPlay }: AudioControlsProps)
   useEffect(() => {
     if (currentAudio && audioRef.current) {
       audioRef.current.src = `/${currentAudio}`;
+      
+      // Set loop property based on whether it's boarding music
+      audioRef.current.loop = currentAudio === '0306.MP3';
+      
       audioRef.current.play().catch(error => {
         console.error("Error playing audio:", error);
         onAudioPlay(false);
@@ -31,7 +35,10 @@ export const AudioControls = ({ currentAudio, onAudioPlay }: AudioControlsProps)
     
     if (audioElement) {
       const handleEnded = () => {
-        onAudioPlay(false);
+        // Only trigger ended for non-looping audio files
+        if (!audioElement.loop) {
+          onAudioPlay(false);
+        }
       };
       
       audioElement.addEventListener('ended', handleEnded);
