@@ -20,10 +20,10 @@ interface AudioButton {
 }
 
 export const audioButtons: AudioButton[] = [
+  { icon: Music2, label: 'Boarding Music', file: '0306.MP3' },
   { icon: Navigation, label: 'Gate Departure', file: '0302.MP3' },
   { icon: Plane, label: 'Pre-pushback', file: '0303.MP3' },
   { icon: Video, label: 'Safety Video', file: '0314.MP3' },
-  { icon: Music2, label: 'Boarding Music', file: '0306.MP3' },
   { icon: Plane, label: 'Pre-takeoff', file: '0304.MP3' },
   { icon: CloudSun, label: 'Climb', file: '0305.MP3' },
   { icon: Compass, label: 'Cruise', file: '0313.MP3' },

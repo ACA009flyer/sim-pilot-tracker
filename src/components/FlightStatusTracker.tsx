@@ -74,8 +74,6 @@ export const FlightStatusTracker = () => {
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <CheckList currentStatus={currentStatus} />
-
               {showMealButton && (
                 <MealButton onClick={handleShowMealService} />
               )}
@@ -101,6 +99,8 @@ export const FlightStatusTracker = () => {
               />
               <IFESystem isAnnouncement={isAnnouncement} />
             </div>
+
+            <CheckList currentStatus={currentStatus} />
 
             <FlightTimer
               elapsedTime={elapsedTime}
