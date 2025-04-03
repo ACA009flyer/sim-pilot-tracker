@@ -23,6 +23,18 @@ export const mealOptions = [
     description: "Vegetarian pasta with seasonal vegetables",
     image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601"
   },
+  {
+    id: 3,
+    name: "Grilled Salmon",
+    description: "Salmon fillet with lemon butter sauce and asparagus",
+    image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2"
+  },
+  {
+    id: 4,
+    name: "Vegetable Curry",
+    description: "Spicy vegetable curry with basmati rice",
+    image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641"
+  },
 ];
 
 export const drinkOptions = [
@@ -31,6 +43,9 @@ export const drinkOptions = [
   { id: 3, name: "Tea" },
   { id: 4, name: "Soft Drink" },
   { id: 5, name: "Juice" },
+  { id: 6, name: "Red Wine" },
+  { id: 7, name: "White Wine" },
+  { id: 8, name: "Sparkling Wine" },
 ];
 
 export const useMealService = (onAnnouncement: (isPlaying: boolean) => void) => {
@@ -38,7 +53,7 @@ export const useMealService = (onAnnouncement: (isPlaying: boolean) => void) => 
   const [showMealService, setShowMealService] = useState(false);
   const [servingMeal, setServingMeal] = useState(!!location.state?.servingMeal);
   const [mealDetails, setMealDetails] = useState(location.state?.mealDetails);
-  const [mealTimeLeft, setMealTimeLeft] = useState(600); // 10 minutes in seconds
+  const [mealTimeLeft, setMealTimeLeft] = useState(300); // 5 minutes in seconds (reduced from 10)
   const [canServeMeal, setCanServeMeal] = useState(true);
   const [servingMealAudio, setServingMealAudio] = useState(false);
   const [audioRef, setAudioRef] = useState<HTMLAudioElement | null>(null);
@@ -47,6 +62,7 @@ export const useMealService = (onAnnouncement: (isPlaying: boolean) => void) => 
   useEffect(() => {
     // Create audio element for meal service
     const audio = new Audio('/0307.MP3');
+    audio.loop = false; // Ensure audio doesn't loop
     setAudioRef(audio);
     
     return () => {
@@ -117,7 +133,7 @@ export const useMealService = (onAnnouncement: (isPlaying: boolean) => void) => 
     delete newState.mealDetails;
     window.history.replaceState({}, '', window.location.pathname);
     window.history.pushState(newState, '', window.location.pathname);
-    setMealTimeLeft(600);
+    setMealTimeLeft(300); // Reset to 5 minutes
     setServingMeal(false);
     setMealDetails(undefined);
     setCanServeMeal(true);
